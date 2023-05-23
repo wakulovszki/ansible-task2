@@ -1,0 +1,32 @@
+
+- name: Disable SELinux
+  selinux:
+    state: disabled
+- name: install the latest version of Apache
+  yum:
+    name: httpd
+    state: latest 
+- name: make sure the service is running
+  systemd:
+    state: started 
+    enabled: yes
+    name: httpd
+- name: Install wget 
+  yum:
+    name: wget
+    state: present
+- name: Download website template
+  get_url:
+    url: https://www.free-css.com/assets/files/free-css-templates/download/page289/nomad-force.zip 
+    dest: "/var/www/html/"
+- name: Download unzip
+  yum:
+    name: unzip
+    state: present    
+- name: Unzip template folder
+  unarchive:
+    src: /var/www/html/nomad-force.zip
+    dest: /var/www/html
+    remote_src: true
+- name: Move all files from template_567_nomad_force to /var/www/html
+  shell: "mv /var/www/html/templatemo_567_nomad_force/* /var/www/html"
