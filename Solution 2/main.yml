@@ -1,0 +1,42 @@
+- hosts: all
+  tasks:
+    - name: Disable SELinux
+      ansible.builtin.selinux:
+        state: disabled
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install package
+      ansible.builtin.package:
+        name: "{{ package_name }}"
+        state: latest
+
+    - name: Make sure the service is running
+      ansible.builtin.systemd:
+        state: started
+        enabled: yes
+        name: "{{ service_name }}"
+
+    - name: Install wget
+      ansible.builtin.package:
+        name: wget
+        state: present
+
+    - name: Download website template
+      ansible.builtin.get_url:
+        url: "https://www.free-css.com/assets/files/free-css-templates/download/page289/nomad-force.zip"
+        dest: "/var/www/html/nomad-force.zip"
+
+    - name: Download unzip
+      ansible.builtin.package:
+        name: unzip
+        state: present
+
+    - name: Unzip template folder
+      ansible.builtin.unarchive:
+        src: "/var/www/html/nomad-force.zip"
+        dest: "/var/www/html"
+        remote_src: true
+    - name: move files to /var/www/html
+      shell: mv /var/www/html/templatemo_567_nomad_force/* /var/www/html    
+
+ 
